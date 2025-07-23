@@ -1,12 +1,13 @@
 /*
-Core components
-load_file
-parse_line
-trim
-parse
-get_value
-set_value
-save_to_file
+| Core Component |
+|----------------|
+|V`trim`         |
+|V`load_file`    |
+| `parse_line`   |
+| `parse`        |
+| `get_value`    |
+| `set_value`    |
+| `save_to_file` |
 
 Algorithm
 1. Load file
@@ -16,14 +17,15 @@ Algorithm
 5. User can change files and get data
 6. Write file
 
-First mission is:
-trim
+Mission is:
+parse_line
 
 */
 
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 
 
@@ -68,7 +70,27 @@ std::string to_string(LineType type) {
     }
 }
 
+std::vector<std::string> load_file(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Could not open file " << filename << std::endl;
+        return {};
+    }
+    std::string line;
+    std::vector<std::string> lines;
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
+    return lines;
+}
+
 int main() {
+
+    // std::vector<std::string> lines = load_file("PATH");
+    //
+    // for (const auto& line : lines) {
+    //     std::cout << "[" << line << "]" << std::endl;
+    // }
 
     // std::string test_data = "  ;[lol = cheburek]            ";
     // std::cout << "[" << trim(test_data) << "]" << std::endl;
