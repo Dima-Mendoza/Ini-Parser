@@ -50,6 +50,13 @@ enum class LineType {
     UNKNOWN
 };
 
+struct ParsedLine {
+    LineType type;
+    std::string section;
+    std::string key;
+    std::string value;
+};
+
 LineType classify_line(const std::string& line) {
     std::string trimmed_line = trim(line);
 
@@ -70,6 +77,42 @@ std::string to_string(LineType type) {
     }
 }
 
+ParsedLine parse_line(const std::string& line) {
+    ParsedLine parsed_line;
+    LineType type_line = classify_line(line);
+    std::string result = trim(line);
+    //std::string class_line = to_string(type_line);
+
+    parsed_line.type = type_line;
+
+    switch (type_line) {
+        case LineType::SECTION: {
+            size_t start = result.find_first_of('[');
+            size_t end = result.find_last_of(']');
+            parsed_line.section = result.substr(start + 1, end - start - 1);
+            break;
+        }
+            case LineType::KEY_VALUE: {
+            //size_t start = result.find_first_of('=');
+            size_t end = result.find_last_of('=');
+
+            if (end != std::string::npos) {
+                //std::string key = result.substr(start + 1, result.size() - start - 1);
+                std::string key = trim(result.substr(0, end));
+                std::string value = trim(result.substr(end + 1));
+                parsed_line.key = key;
+                parsed_line.value = value;
+                break;
+            }
+        }
+            default: {
+            break;
+        }
+    }
+
+    return parsed_line;
+}
+
 std::vector<std::string> load_file(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -85,6 +128,28 @@ std::vector<std::string> load_file(const std::string& filename) {
 }
 
 int main() {
+
+    // std::vector<std::string> test_lines = {
+    //     "  [video]  ",
+    //     "fullscreen = true",
+    //     "resolution =  1920x1080 ",
+    //     "; this is a comment",
+    //     "# legacy config",
+    //     "",
+    //     "weird line without equals"
+    // };
+    //
+    // for (const auto& line : test_lines) {
+    //     ParsedLine parsed = parse_line(line);
+    //     std::cout << "Line: \"" << line << "\"\n"
+    //               << "Type: " << to_string(parsed.type) << "\n"
+    //               << "Section: " << parsed.section << "\n"
+    //               << "Key: " << parsed.key << "\n"
+    //               << "Value: " << parsed.value << "\n"
+    //               << "------------------------" << std::endl;
+    // }
+
+
 
     // std::vector<std::string> lines = load_file("PATH");
     //
