@@ -3,8 +3,8 @@
 |----------------|
 |V`trim`         |
 |V`load_file`    |
-| `parse_line`   |
-| `parse`        |
+|V`parse_line`   |
+|V`parse`        |
 | `get_value`    |
 | `set_value`    |
 | `save_to_file` |
@@ -18,12 +18,13 @@ Algorithm
 6. Write file
 
 Mission is:
-parse_line
+get_value
 
 */
 
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -81,7 +82,6 @@ ParsedLine parse_line(const std::string& line) {
     ParsedLine parsed_line;
     LineType type_line = classify_line(line);
     std::string result = trim(line);
-    //std::string class_line = to_string(type_line);
 
     parsed_line.type = type_line;
 
@@ -93,11 +93,9 @@ ParsedLine parse_line(const std::string& line) {
             break;
         }
             case LineType::KEY_VALUE: {
-            //size_t start = result.find_first_of('=');
             size_t end = result.find_last_of('=');
 
             if (end != std::string::npos) {
-                //std::string key = result.substr(start + 1, result.size() - start - 1);
                 std::string key = trim(result.substr(0, end));
                 std::string value = trim(result.substr(end + 1));
                 parsed_line.key = key;
@@ -127,7 +125,53 @@ std::vector<std::string> load_file(const std::string& filename) {
     return lines;
 }
 
+std::map<std::string, std::map<std::string, std::string>> parse(const std::vector<std::string>& lines) {
+    std::map<std::string, std::map<std::string, std::string>> config;
+
+    std::string current_section;
+
+
+    for (const auto& line : lines) {
+        ParsedLine parsed_line = parse_line(line);
+        if (parsed_line.type == LineType::SECTION) {
+            current_section = parsed_line.section;
+        }
+        else if (parsed_line.type == LineType::KEY_VALUE) {
+            config[current_section][parsed_line.key] = parsed_line.value;
+        }
+    }
+
+    return config;
+}
+
 int main() {
+
+    std::vector<std::string> test_lines = {
+        "; This is a comment",
+        "",
+        "[video]",
+        "fullscreen = true",
+        "resolution = 1920x1080",
+        "",
+        "[audio]",
+        "volume = 90",
+        "mute = false",
+        "# Another comment",
+        "  ",
+        "[network]",
+        "ip = 192.168.1.10",
+        "port = 8080"
+    };
+
+    auto config = parse(test_lines);
+
+    for (const auto& [section, keyvals] : config) {
+        std::cout << "[" << section << "]" << std::endl;
+        for (const auto& [key, value] : keyvals) {
+            std::cout << key << " = " << value << std::endl;
+        }
+        std::cout << std::endl;
+    }
 
     // std::vector<std::string> test_lines = {
     //     "  [video]  ",
