@@ -144,34 +144,73 @@ std::map<std::string, std::map<std::string, std::string>> parse(const std::vecto
     return config;
 }
 
+std::string get_value(std::map<std::string,
+    std::map<std::string, std::string>>& config,
+    const std::string& key,
+    const std::string& section = "General",
+    const std::string& value = "") {
+
+    std::string result;
+
+    if (config.find(section) != config.end()) {
+        if (config[section].find(key) != config[section].end()) {
+            result = config[section][key];
+        } else result = "Key not found";
+    } else result = "Not found";
+
+    return result;
+
+}
+
 int main() {
 
-    std::vector<std::string> test_lines = {
-        "; This is a comment",
-        "",
-        "[video]",
-        "fullscreen = true",
-        "resolution = 1920x1080",
-        "",
-        "[audio]",
-        "volume = 90",
-        "mute = false",
-        "# Another comment",
-        "  ",
-        "[network]",
-        "ip = 192.168.1.10",
-        "port = 8080"
-    };
+        // std::vector<std::string> lines = {
+        //     "[General]",
+        //     "username = admin",
+        //     "password = 1234",
+        //     "",
+        //     "[Network]",
+        //     "host = 127.0.0.1",
+        //     "port = 8080"
+        // };
+        //
+        // auto config = parse(lines);
+        //
+        // std::cout << "username: " << get_value(config, "username") << std::endl;
+        // std::cout << "password: " << get_value(config, "password") << std::endl;
+        // std::cout << "host: " << get_value(config, "host", "Network") << std::endl;
+        // std::cout << "port: " << get_value(config, "port", "Network") << std::endl;
+        //
+        // std::cout << "missing key: " << get_value(config, "api_key") << std::endl;
+        // std::cout << "missing section: " << get_value(config, "user", "Database") << std::endl;
 
-    auto config = parse(test_lines);
 
-    for (const auto& [section, keyvals] : config) {
-        std::cout << "[" << section << "]" << std::endl;
-        for (const auto& [key, value] : keyvals) {
-            std::cout << key << " = " << value << std::endl;
-        }
-        std::cout << std::endl;
-    }
+    // std::vector<std::string> test_lines = {
+    //     "; This is a comment",
+    //     "",
+    //     "[video]",
+    //     "fullscreen = true",
+    //     "resolution = 1920x1080",
+    //     "",
+    //     "[audio]",
+    //     "volume = 90",
+    //     "mute = false",
+    //     "# Another comment",
+    //     "  ",
+    //     "[network]",
+    //     "ip = 192.168.1.10",
+    //     "port = 8080"
+    // };
+    //
+    // auto config = parse(test_lines);
+    //
+    // for (const auto& [section, keyvals] : config) {
+    //     std::cout << "[" << section << "]" << std::endl;
+    //     for (const auto& [key, value] : keyvals) {
+    //         std::cout << key << " = " << value << std::endl;
+    //     }
+    //     std::cout << std::endl;
+    // }
 
     // std::vector<std::string> test_lines = {
     //     "  [video]  ",
