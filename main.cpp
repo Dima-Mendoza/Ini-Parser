@@ -6,8 +6,8 @@
 |V`parse_line`   |
 |V`parse`        |
 |V`get_value`    |
-| `set_value`    |
-| `save_to_file` |
+|V`set_value`    |
+|V`save_to_file` |
 
 | etc Component  |
 | get_keys       |
@@ -23,7 +23,7 @@ Algorithm
 6. Write file
 
 Mission is:
-set_value
+get_values
 
 */
 
@@ -192,6 +192,32 @@ std::string set_value(std::map<std::string,
 
 }
 
+void save_to_file(std::map<std::string,
+    std::map<std::string,
+    std::string>>& config,
+    const std::string& filename) {
+
+    std::ofstream file;
+    file.open(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Could not open file " << filename << std::endl;
+        return;
+    }
+
+    for (const auto& [section, pairs] : config   ) {
+        file << "[" << section << "]" << "\n";
+        for (const auto& [key, value] : pairs) {
+            file << key << " = " << value << std::endl;
+        }
+
+        file << std::endl;
+    }
+
+    file.close();
+
+}
+
 int main() {
 
     std::cout << "Welcome to ini parser!" << std::endl;
@@ -202,38 +228,48 @@ int main() {
     std::map<std::string, std::map<std::string, std::string>> config = parse(load_file(file_path));
 
     std::cout << "File is loaded and parsed, please enter what you are want to do: " << std::endl;
-    std::cout << "1 - Get value \n2 - Set value \n3 - Save changes to file" << std::endl;
 
-    std::string user_choice;
-    std::getline(std::cin, user_choice);
+    while (true) {
+        std::cout << "1 - Get value \n2 - Set value \n3 - Save changes to file\ne - Exit " << std::endl;
 
-    switch (user_choice[0]) {
-        case '1': {
-            std::cout << "Please enter the section name and key: ";
-            std::string section, key;
-            std::getline(std::cin, section);
-            std::getline(std::cin, key);
+        std::string user_choice;
+        std::getline(std::cin, user_choice);
 
-            std::string value = get_value(config, key, section);
-            std::cout << value << std::endl;
-            break;
+        switch (user_choice[0]) {
+            case '1': {
+                std::cout << "Please enter the section name and key: ";
+                std::string section, key;
+                std::getline(std::cin, section);
+                std::getline(std::cin, key);
+
+                std::string value = get_value(config, key, section);
+                std::cout << value << std::endl;
+                break;
+            }
+            case '2': {
+                std::cout << "Please enter the section name, key and new value: ";
+                std::string section, key, value;
+                std::getline(std::cin, section);
+                std::getline(std::cin, key);
+                std::getline(std::cin, value);
+
+                set_value(config, key, value, section);
+                break;
+            }
+            case '3': {
+                std::cout << "Please enter new file name: ";
+                std::string filename;
+                std::getline(std::cin, filename);
+
+                save_to_file(config, filename);
+                break;
+            }
+            case 'e': {
+                return 0;
+            }
+            default: std::cerr << "Invalid input" << std::endl;
         }
-        case '2': {
-            std::cout << "Please enter the section name, key and new value: ";
-            std::string section, key, value;
-            std::getline(std::cin, section);
-            std::getline(std::cin, key);
-            std::getline(std::cin, value);
-
-            set_value(config, key, value, section);
-            break;
-        }
-        case '3': {
-            break;
-        }
-        default: std::cerr << "Invalid input" << std::endl;
     }
-
 
 
         // std::vector<std::string> lines = {
