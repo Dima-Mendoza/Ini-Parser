@@ -230,6 +230,7 @@ int main() {
     std::cout << "File is loaded and parsed, please enter what you are want to do: " << std::endl;
 
     while (true) {
+
         std::cout << "1 - Get value \n2 - Set value \n3 - Save changes to file\ne - Exit " << std::endl;
 
         std::string user_choice;
@@ -237,20 +238,23 @@ int main() {
 
         switch (user_choice[0]) {
             case '1': {
-                std::cout << "Please enter the section name and key: ";
                 std::string section, key;
+                std::cout << "Please enter the section" << std::endl;
                 std::getline(std::cin, section);
+                std::cout << "Please enter key" << std::endl;
                 std::getline(std::cin, key);
 
                 std::string value = get_value(config, key, section);
-                std::cout << value << std::endl;
+                std::cout << key << " = " << value << std::endl;
                 break;
             }
             case '2': {
-                std::cout << "Please enter the section name, key and new value: ";
                 std::string section, key, value;
+                std::cout << "Please enter the section" << std::endl;
                 std::getline(std::cin, section);
+                std::cout << "Please enter the key" << std::endl;
                 std::getline(std::cin, key);
+                std::cout << "Please enter new value" << std::endl;
                 std::getline(std::cin, value);
 
                 set_value(config, key, value, section);
@@ -270,6 +274,6 @@ int main() {
             default: std::cerr << "Invalid input" << std::endl;
         }
     }
-    
+
     return 0;
 }
